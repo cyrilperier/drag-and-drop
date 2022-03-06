@@ -5,9 +5,8 @@ import javafx.scene.image.Image;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -24,11 +23,13 @@ public class Utils {
      */
     public static List<RGBRepresentation> getRGBFromImg(Image img){
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
         List<RGBRepresentation> rgbRepresentationList = new ArrayList<>();
-        for(int i = 0; i < bufferedImage.getWidth(); i++) {
-            for (int j = 0; j < bufferedImage.getHeight(); j++)
+        for(int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++)
             {
-                int pixel = bufferedImage.getRGB(i,j);
+                int pixel = bufferedImage.getRGB(h,w);
                 //Creating a Color object from pixel value
                 Color color = new Color(pixel, true);
                 //Retrieving the R G B values
@@ -48,15 +49,15 @@ public class Utils {
      * @param pixel pixel
      * @return double distance
      */
-    public static double distanceEuclidean(RGBRepresentation cluster,RGBRepresentation pixel){
+    public static double distanceEuclidean(Cluster cluster,RGBRepresentation pixel){
         double res = Math.pow(pixel.getBlue() - cluster.getBlue(),2);
         res += Math.pow(pixel.getRed() - cluster.getRed(),2);
         res += Math.pow(pixel.getGreen() - cluster.getGreen(),2);
-
+        //TODO A diviser par 3 ou pas ?
         return Math.sqrt(res);
     }
 
-    public static double distanceManhattan(RGBRepresentation cluster,RGBRepresentation pixel){
+    public static double distanceManhattan(Cluster cluster,RGBRepresentation pixel){
         return 0;
     }
 
@@ -66,14 +67,14 @@ public class Utils {
      * @param pixel
      * @return
      */
-    public static RGBRepresentation nearestCluster(List<RGBRepresentation> clusters, RGBRepresentation pixel, String method){
+    public static Cluster findNearestCluster(List<Cluster> clusters, RGBRepresentation pixel, DistanceMethod method){
         //Initialisation negatif
         double distance = -1;
-        RGBRepresentation nearestCluster = null;
-        for (RGBRepresentation cluster: clusters
+        Cluster nearestCluster = null;
+        for (Cluster cluster: clusters
              ) {
             //TODO Passer apr un consummer(fonction en parametre) pour eviter de faire une condition a chaque fois
-            double tmp = method.equals("euclidean") ? distanceEuclidean(cluster,pixel) : distanceManhattan(cluster,pixel);
+            double tmp = method == DistanceMethod.EUCLIDEAN ? distanceEuclidean(cluster,pixel) : distanceManhattan(cluster,pixel);
             if(distance < 0 || tmp < distance ){
                 distance = tmp;
                 nearestCluster = cluster;
@@ -85,13 +86,23 @@ public class Utils {
     //TODO passer directement la map
     /**
      *
-     * @param listOfCluster
+     * @param clusterXPixel
      * @param listOfPixel
      * @return
      */
-    public  static Map<RGBRepresentation,List<RGBRepresentation>> getPixelSort(List<RGBRepresentation> listOfCluster, List<RGBRepresentation> listOfPixel){
 
-        return null;
 
+    /**
+     * Create random cluster
+     * @param image
+     * @param k
+     * @return
+     */
+    public static List<RGBRepresentation> createClusters(BufferedImage image, int k){
+        List<RGBRepresentation> listClusters = new ArrayList<>(k);
+        for (int i = 0; i < k; i++) {
+            listClusters.add(new RGBRepresentation());
+        }
+        return listClusters;
     }
 }

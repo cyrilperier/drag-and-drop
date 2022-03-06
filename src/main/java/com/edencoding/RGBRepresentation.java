@@ -1,7 +1,7 @@
 package com.edencoding;
 import java.util.Random;
 /**
- * @author Launois Remy
+ * @author Launois Remy / Perier Cyril
  * Project: drag-and-drop
  * Package: com.edencoding
  */
@@ -14,6 +14,10 @@ public class RGBRepresentation {
         this.red = red;
         this.green = green;
         this.blue = blue;
+    }
+
+    public RGBRepresentation() {
+        this.generateRGB();
     }
 
     public int getRed() {
@@ -42,8 +46,8 @@ public class RGBRepresentation {
 
     public void generateRGB(){
         Random rand = new Random();
-        this.red = rand.nextInt(251);
-        this.green = rand.nextInt(251);
-        this.blue = rand.nextInt(251);
+        this.red = rand.nextInt(256);
+        this.green = rand.nextInt(256);
+        this.blue = rand.nextInt(256);
     }
 }

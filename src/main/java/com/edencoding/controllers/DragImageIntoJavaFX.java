@@ -4,6 +4,7 @@ import com.edencoding.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
@@ -21,25 +22,31 @@ import java.util.List;
  */
 public class DragImageIntoJavaFX {
 
+    @FXML
     public Pane dropZone;
+    @FXML
     public Pane dropInstructions;
+    @FXML
     public ImageView imageView;
-    public BufferedImage bufferedImg;
-    public Image newimg;
+    @FXML
+    public ComboBox<DistanceMethod> distanceMethod;
     public int k = 3;
 
     //TODO Faire choisir k, la méthode de calcul de distance et kmeans ou dbscan
     @FXML
     private void changeImage(ActionEvent event){
         event.consume();
-
+        DistanceMethod distanceMethod = this.distanceMethod.valueProperty().getValue();
         BufferedImage bufferedImage = Utils.transformImageToBufferedImage(imageView.getImage());
+
         List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
         List<Cluster> clusterList = Utils.createClusters(k);
+
         Kmeans kmeans = new Kmeans(listPixel,clusterList);
-        BufferedImage bufferedImage1 = kmeans.doKmeans(bufferedImage,DistanceMethod.EUCLIDEAN);
-        Utils.createImage("test.png",bufferedImage1);
-        System.out.println(bufferedImage1);
+
+        BufferedImage newImage = kmeans.doKmeans(bufferedImage,distanceMethod);
+        Utils.createImage("",newImage,Algorithm.KMEANS,distanceMethod,k);
+        System.out.println(newImage);
 
     }
 
@@ -50,7 +57,7 @@ public class DragImageIntoJavaFX {
     public void makeTextAreaDragTarget(Node node) {
         node.setOnDragOver(event -> event.acceptTransferModes(TransferMode.ANY));
 
-
+        this.distanceMethod.getItems().setAll(DistanceMethod.values());
 
         node.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();

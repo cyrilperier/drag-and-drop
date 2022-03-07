@@ -5,6 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edencoding.controllers.DragImageIntoJavaFX">
     <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: white;">
         <Label text="Drag Something from your Desktop" textAlignment="CENTER" wrapText="true">
@@ -29,6 +31,9 @@
     </StackPane>
    <Pane prefHeight="200.0" prefWidth="1000.0">
       <children>
+          <ComboBox fx:id="distanceMethod"  prefWidth="90.0" promptText="choose">
+          </ComboBox>
          <Button onAction="#changeImage" layoutX="474.0" layoutY="79.0" mnemonicParsing="false" text="Transform" />
-      </children></Pane>
+      </children>
+   </Pane>
 </VBox>

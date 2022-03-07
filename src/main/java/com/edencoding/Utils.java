@@ -84,6 +84,7 @@ public class Utils {
      * Method for find the belonging of a pixel to a cluster
      * @param clusters List of cluster
      * @param pixel The RGBRepresentation we want to find the cluster
+     * @param method Method to calculate distance, if null or something else than euclidean it will be manhattan //TODO Gestion des erreus
      * @return the nearest cluster of pixel
      */
     public static Cluster findNearestCluster(List<Cluster> clusters, RGBRepresentation pixel, DistanceMethod method){
@@ -118,11 +119,11 @@ public class Utils {
 
     /**
      * Create file image from a bufferedImage with a name of file
-     * @param filename Image name, must contain the extension
+     * @param filename Image name
      * @param bufferedImage Image we want to save
      */
-    public static void createImage(String filename, BufferedImage bufferedImage) {
-        File file = new File(filename);
+    public static void createImage(String filename, BufferedImage bufferedImage, Algorithm algorithm, DistanceMethod distanceMethod,int k) {
+        File file = new File("src/output/"+filename+"_"+algorithm+"_"+k+"_"+distanceMethod+".png");
         try {
             ImageIO.write(bufferedImage, "png", file);
         } catch (Exception e) {

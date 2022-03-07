@@ -30,7 +30,7 @@ public class Utils {
         for(int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++)
             {
-                int pixel = bufferedImage.getRGB(h,w);
+                int pixel = bufferedImage.getRGB(w,h);
                 //Creating a Color object from pixel value
                 Color color = new Color(pixel, true);
                 //Retrieving the R G B values

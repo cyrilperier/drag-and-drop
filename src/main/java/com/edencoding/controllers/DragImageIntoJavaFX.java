@@ -34,10 +34,8 @@ public class DragImageIntoJavaFX {
         List<Cluster> clusterList = Utils.createClusters(bufferedImage,k);
         Kmeans kmeans = new Kmeans(listPixel,clusterList);
         BufferedImage bufferedImage1 = kmeans.doKmeans(bufferedImage,k, DistanceMethod.EUCLIDEAN);
- /*
         Utils.createImage("test.png",bufferedImage1);
         System.out.println(bufferedImage1);
-*/
 
     }
 

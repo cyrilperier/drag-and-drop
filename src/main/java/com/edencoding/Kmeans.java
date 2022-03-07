@@ -2,6 +2,7 @@ package com.edencoding;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class Kmeans {
     private BufferedImage createImageFromCluster(BufferedImage image, int[] idClusterForEachPixel) {
         int height = image.getHeight();
         int width = image.getWidth();
+        List<Color> test = new ArrayList<>();
         BufferedImage result = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
@@ -71,9 +73,11 @@ public class Kmeans {
                 int green = cluster.getGreen();
                 int blue = cluster.getBlue();
                 Color pixel = new Color(red,green,blue);
+                test.add(pixel);
                 result.setRGB(w,h,pixel.getRGB());
             }
         }
+
 
         return result;
     }

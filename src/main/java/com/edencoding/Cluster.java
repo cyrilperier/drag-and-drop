@@ -1,5 +1,6 @@
 package com.edencoding;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,8 +80,7 @@ public class Cluster {
         this.rgbRepresentation.setGreen(green);
     }
     /**
-     * Do the mean of cluster
-     * @return
+     * Do the mean of cluster and apply it
      */
     public void mean(){
         int red = 0;
@@ -109,6 +109,13 @@ public class Cluster {
 
     public void removePixel(RGBRepresentation pixel) {
         this.pixelAssociate.remove(pixel);
+    }
+
+    public Color getColorCluster() {
+        int red = this.getRed();
+        int green = this.getGreen();
+        int blue = this.getBlue();
+        return new Color(red,green,blue);
     }
 
     @Override

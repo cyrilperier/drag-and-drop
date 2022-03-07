@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author Launois Remy
+ * @author Launois Remy / Perier Cyril
  * Project: drag-and-drop
  * Package: com.edencoding
  */
@@ -36,18 +36,25 @@ public class Kmeans {
         this.listClusters = listClusters;
     }
 
-    public BufferedImage doKmeans(BufferedImage image, int k, DistanceMethod method){
+    /**
+     * Main method, do execute k-means algorithm
+     * @param image Image we want to execute kmeans
+     * @param method Method to calculate distance
+     * @return new bufferedImage according to clustering
+     */
+    public BufferedImage doKmeans(BufferedImage image,DistanceMethod method){
 
         int[] idClusterForEachPixel = new int[this.listPixels.size()];
         Arrays.fill(idClusterForEachPixel,-1);
-        boolean pixelChangedCluster = false;
+        boolean pixelChangedCluster;
+
         do{
             int i = 0;
-            //TODO J'ai pas associé tout=s les pxiels ???
+            //TODO J'ai pas associé tous les pxiels ???
             pixelChangedCluster = associatePixelToCluster(method, idClusterForEachPixel, i);
             meanCLusters();
 
-        }while(pixelChangedCluster);
+        }while(pixelChangedCluster); //Stop when pixel stop changing of cluster
 
         return createImageFromCluster(image,idClusterForEachPixel);
 
@@ -56,31 +63,29 @@ public class Kmeans {
 
     /**
      * Create new image with the color of cluster;
-     * @param image
-     * @param idClusterForEachPixel
-     * @return
+     * @param bufferedImage Old image, to have width and height
+     * @param idClusterForEachPixel Array with cluster associate for all pixel
+     * @return new Image, after clustering
      */
-    private BufferedImage createImageFromCluster(BufferedImage image, int[] idClusterForEachPixel) {
-        int height = image.getHeight();
-        int width = image.getWidth();
-        List<Color> test = new ArrayList<>();
+    private BufferedImage createImageFromCluster(BufferedImage bufferedImage, int[] idClusterForEachPixel) {
+        int height = bufferedImage.getHeight();
+        int width = bufferedImage.getWidth();
         BufferedImage result = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
+                //Get Cluster associate to the pixel
                 int idCluster = idClusterForEachPixel[width * h + w];
-                Cluster cluster = this.listClusters.get(idCluster);
-                int red = cluster.getRed();
-                int green = cluster.getGreen();
-                int blue = cluster.getBlue();
-                Color pixel = new Color(red,green,blue);
-                test.add(pixel);
+                //Create color from cluster
+                Color pixel = this.listClusters.get(idCluster).getColorCluster();
+                //Apply color to the new image
                 result.setRGB(w,h,pixel.getRGB());
             }
         }
 
-
         return result;
     }
+
+
 
     /**
      * Do the mean on each cluster
@@ -92,6 +97,13 @@ public class Kmeans {
         }
     }
 
+    /**
+     * Associate a pixel to his nearest Cluster
+     * @param method Method to calculate distance bewteen cluster and pixel
+     * @param idClusterForEachPixel Array of cluster associate to pixel
+     * @param i indice of pixel
+     * @return if the pixel have change of cluster
+     */
     private boolean associatePixelToCluster(DistanceMethod method, int[] idClusterForEachPixel, int i) {
         boolean pixelChangedCluster = false;
 
@@ -110,6 +122,11 @@ public class Kmeans {
         return pixelChangedCluster;
     }
 
+    /**
+     * Method to find if the pixel is in one of the cluster
+     * @param pixel we search in list of clsuter
+     * @return Cluster if the pixel is in it, else null
+     */
     public Cluster findPixelInCLuster(RGBRepresentation pixel){
         for (Cluster cluster: this.listClusters
              ) {
@@ -120,6 +137,10 @@ public class Kmeans {
         return null;
     }
 
+    /**
+     * Delete pixel in the cluster if he exists
+     * @param pixel to remove
+     */
     public void removePixelIfExist(RGBRepresentation pixel){
         Cluster cluster = findPixelInCLuster(pixel);
         if(cluster != null) {

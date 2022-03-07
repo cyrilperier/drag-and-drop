@@ -9,7 +9,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * JavaFX App
+ * @author Launois Remy / Perier Cyril
+ * Project: drag-and-drop
+ * Package: com.edencoding
  */
 public class App extends Application {
 

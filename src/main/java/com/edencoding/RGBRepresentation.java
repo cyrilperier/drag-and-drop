@@ -1,10 +1,12 @@
 package com.edencoding;
 import java.util.Objects;
 import java.util.Random;
+
 /**
  * @author Launois Remy / Perier Cyril
  * Project: drag-and-drop
  * Package: com.edencoding
+ * Class representing RGB attributes
  */
 public class RGBRepresentation {
     private int red;

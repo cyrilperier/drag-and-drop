@@ -14,7 +14,11 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 
-
+/**
+ * @author Launois Remy / Perier Cyril
+ * Project: drag-and-drop
+ * Package: com.edencoding
+ */
 public class DragImageIntoJavaFX {
 
     public Pane dropZone;
@@ -31,9 +35,9 @@ public class DragImageIntoJavaFX {
 
         BufferedImage bufferedImage = Utils.transformImageToBufferedImage(imageView.getImage());
         List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
-        List<Cluster> clusterList = Utils.createClusters(bufferedImage,k);
+        List<Cluster> clusterList = Utils.createClusters(k);
         Kmeans kmeans = new Kmeans(listPixel,clusterList);
-        BufferedImage bufferedImage1 = kmeans.doKmeans(bufferedImage,k, DistanceMethod.EUCLIDEAN);
+        BufferedImage bufferedImage1 = kmeans.doKmeans(bufferedImage,DistanceMethod.EUCLIDEAN);
         Utils.createImage("test.png",bufferedImage1);
         System.out.println(bufferedImage1);
 
@@ -44,9 +48,7 @@ public class DragImageIntoJavaFX {
     }
 
     public void makeTextAreaDragTarget(Node node) {
-        node.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.ANY);
-        });
+        node.setOnDragOver(event -> event.acceptTransferModes(TransferMode.ANY));
 
 
 

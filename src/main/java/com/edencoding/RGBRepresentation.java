@@ -1,4 +1,5 @@
 package com.edencoding;
+import java.util.Objects;
 import java.util.Random;
 /**
  * @author Launois Remy / Perier Cyril
@@ -48,6 +49,26 @@ public class RGBRepresentation {
         Random rand = new Random();
         this.red = rand.nextInt(256);
         this.green = rand.nextInt(256);
-        this.blue = rand.nextInt(256);
+        this.blue =  rand.nextInt(256);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RGBRepresentation that = (RGBRepresentation) o;
+        return red == that.red && blue == that.blue && green == that.green;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(red, blue, green);
+    }
+
+    @Override
+    public String toString() {
+        return "{ red = " + red +
+                ", blue = " + blue +
+                ", green = " + green + "}";
     }
 }

@@ -3,8 +3,10 @@ package com.edencoding;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,11 +20,10 @@ public class Utils {
 
     /**
      *
-     * @param img
+     * @param bufferedImage
      * @return
      */
-    public static List<RGBRepresentation> getRGBFromImg(Image img){
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(img, null);
+    public static List<RGBRepresentation> getRGBFromImg(BufferedImage bufferedImage){
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
         List<RGBRepresentation> rgbRepresentationList = new ArrayList<>();
@@ -43,6 +44,9 @@ public class Utils {
         return rgbRepresentationList;
     }
 
+    public static BufferedImage transformImageToBufferedImage(Image image){
+        return SwingFXUtils.fromFXImage(image, null);
+    }
     /**
      * Method  to return the distance between one pxiel and one cluster
      * @param cluster
@@ -83,26 +87,27 @@ public class Utils {
         return nearestCluster;
     }
 
-    //TODO passer directement la map
-    /**
-     *
-     * @param clusterXPixel
-     * @param listOfPixel
-     * @return
-     */
-
-
     /**
      * Create random cluster
      * @param image
      * @param k
      * @return
      */
-    public static List<RGBRepresentation> createClusters(BufferedImage image, int k){
-        List<RGBRepresentation> listClusters = new ArrayList<>(k);
+    public static List<Cluster> createClusters(BufferedImage image, int k){
+        List<Cluster> listClusters = new ArrayList<>(k);
         for (int i = 0; i < k; i++) {
-            listClusters.add(new RGBRepresentation());
+            RGBRepresentation rgbRepresentationAlea = new RGBRepresentation();
+            listClusters.add(new Cluster(i,rgbRepresentationAlea));
         }
         return listClusters;
+    }
+
+    public static void createImage(String filename, BufferedImage bufferedImage) {
+        File file = new File(filename);
+        try {
+            ImageIO.write(bufferedImage, "png", file);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
     }
 }

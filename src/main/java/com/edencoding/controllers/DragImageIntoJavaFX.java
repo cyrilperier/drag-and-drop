@@ -1,22 +1,18 @@
 package com.edencoding.controllers;
 
-import javafx.concurrent.Task;
+import com.edencoding.*;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
-import java.util.concurrent.ExecutionException;
-
-import static javafx.embed.swing.SwingFXUtils.toFXImage;
+import java.util.List;
 
 
 public class DragImageIntoJavaFX {
@@ -26,6 +22,24 @@ public class DragImageIntoJavaFX {
     public ImageView imageView;
     public BufferedImage bufferedImg;
     public Image newimg;
+    public int k = 3;
+
+    //TODO Faire choisir k, la méthode de calcul de distance et kmeans ou dbscan
+    @FXML
+    private void changeImage(ActionEvent event){
+        event.consume();
+
+        BufferedImage bufferedImage = Utils.transformImageToBufferedImage(imageView.getImage());
+        List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
+        List<Cluster> clusterList = Utils.createClusters(bufferedImage,k);
+        Kmeans kmeans = new Kmeans(listPixel,clusterList);
+        BufferedImage bufferedImage1 = kmeans.doKmeans(bufferedImage,k, DistanceMethod.EUCLIDEAN);
+ /*
+        Utils.createImage("test.png",bufferedImage1);
+        System.out.println(bufferedImage1);
+*/
+
+    }
 
     public void initialize() {
         makeTextAreaDragTarget(imageView);
@@ -58,6 +72,8 @@ public class DragImageIntoJavaFX {
                 imageView.setX(350);
                 imageView.setY(40);
                 dropInstructions.getChildren().add(imageView);
+
+
             }
 
             dropInstructions.setVisible(true);

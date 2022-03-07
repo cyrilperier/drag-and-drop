@@ -14,11 +14,17 @@ public class Cluster {
     private List<RGBRepresentation> pixelAssociate;
 
     public Cluster(int idCluster, RGBRepresentation rgbRepresentation) {
+        this.idCluster = idCluster;
         this.rgbRepresentation = rgbRepresentation;
         this.pixelAssociate = new ArrayList<>();
     }
-
+    public Cluster(RGBRepresentation rgbRepresentation) {
+        this.idCluster = Integer.MIN_VALUE;
+        this.rgbRepresentation = rgbRepresentation;
+        this.pixelAssociate = new ArrayList<>();
+    }
     public Cluster(int idCluster, RGBRepresentation rgbRepresentation, List<RGBRepresentation> pixelAssociate) {
+        this.idCluster = idCluster;
         this.rgbRepresentation = rgbRepresentation;
         this.pixelAssociate = pixelAssociate;
     }
@@ -87,14 +93,15 @@ public class Cluster {
             green += pixel.getGreen();
             blue += pixel.getBlue();
         }
-        red /= pixelAssociate.size();
-        green /= pixelAssociate.size();
-        blue /= pixelAssociate.size();
+        if (pixelAssociate.size() != 0){
+            red /= pixelAssociate.size();
+            green /= pixelAssociate.size();
+            blue /= pixelAssociate.size();
+        }
         this.rgbRepresentation = new RGBRepresentation(red,green,blue);
     }
 
 
-//TODO faire la methode equals et hasCode dans rgbRepresentation
     public boolean containsPixel(RGBRepresentation pixel){
         return pixelAssociate.contains(pixel);
     }
@@ -103,4 +110,13 @@ public class Cluster {
     public void removePixel(RGBRepresentation pixel) {
         this.pixelAssociate.remove(pixel);
     }
+
+    @Override
+    public String toString() {
+        return "idCluster = " + idCluster +
+                ", rgbRepresentation = " + rgbRepresentation +
+                ", pixelAssociate=" + pixelAssociate ;
+    }
 }
+
+

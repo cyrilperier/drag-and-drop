@@ -1,7 +1,7 @@
 package com.edencoding;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +19,6 @@ public class Kmeans {
         this.listClusters = listClusters;
     }
 
-
     public List<RGBRepresentation> getListPixels() {
         return listPixels;
     }
@@ -36,37 +35,75 @@ public class Kmeans {
         this.listClusters = listClusters;
     }
 
-    public void doKmeans(BufferedImage image, int k,DistanceMethod method){
+    public BufferedImage doKmeans(BufferedImage image, int k, DistanceMethod method){
 
         int[] idClusterForEachPixel = new int[this.listPixels.size()];
         Arrays.fill(idClusterForEachPixel,-1);
         boolean pixelChangedCluster = false;
         do{
-            pixelChangedCluster = false;
             int i = 0;
-
-            for (RGBRepresentation pixel: this.listPixels
-            ) {
-                Cluster cluster = Utils.findNearestCluster(this.listClusters,pixel,method);
-
-                if(idClusterForEachPixel[i] != cluster.getIdCluster()){
-                    //TODO Supprimer le pixel la où il était avant
-                    this.removePixelIfExist(pixel);
-                    cluster.addPixel(pixel);
-                    pixelChangedCluster = true;
-                }
-                i++;
-            }
-
-            List<Cluster> listClusterNew = new ArrayList<>();
-            for (Cluster cluster: this.listClusters
-                 ) {
-                cluster.mean();
-            }
+            //TODO J'ai pas associé tout=s les pxiels ???
+            pixelChangedCluster = associatePixelToCluster(method, idClusterForEachPixel, i);
+            meanCLusters();
 
         }while(pixelChangedCluster);
 
+        return createImageFromCluster(image,idClusterForEachPixel);
 
+
+    }
+
+    /**
+     * Create new image with the color of cluster;
+     * @param image
+     * @param idClusterForEachPixel
+     * @return
+     */
+    private BufferedImage createImageFromCluster(BufferedImage image, int[] idClusterForEachPixel) {
+        int height = image.getHeight();
+        int width = image.getWidth();
+        BufferedImage result = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                int idCluster = idClusterForEachPixel[width * h + w];
+                Cluster cluster = this.listClusters.get(idCluster);
+                int red = cluster.getRed();
+                int green = cluster.getGreen();
+                int blue = cluster.getBlue();
+                Color pixel = new Color(red,green,blue);
+                result.setRGB(w,h,pixel.getRGB());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Do the mean on each cluster
+     */
+    private void meanCLusters() {
+        for (Cluster cluster: this.listClusters
+             ) {
+            cluster.mean();
+        }
+    }
+
+    private boolean associatePixelToCluster(DistanceMethod method, int[] idClusterForEachPixel, int i) {
+        boolean pixelChangedCluster = false;
+
+        for (RGBRepresentation pixel: this.listPixels
+        ) {
+            Cluster cluster = Utils.findNearestCluster(this.listClusters,pixel, method);
+
+            if(idClusterForEachPixel[i] != cluster.getIdCluster()){
+                this.removePixelIfExist(pixel);
+                cluster.addPixel(pixel);
+                idClusterForEachPixel[i] = cluster.getIdCluster();
+                pixelChangedCluster = true;
+            }
+            i++;
+        }
+        return pixelChangedCluster;
     }
 
     public Cluster findPixelInCLuster(RGBRepresentation pixel){
@@ -87,8 +124,4 @@ public class Kmeans {
 
     }
 
-    public boolean clusterStable(List<Cluster> clusterList){
-        return false;
-
-    }
 }

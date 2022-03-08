@@ -1,6 +1,7 @@
 package com.edencoding.controllers;
 
 import com.edencoding.*;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -30,24 +31,37 @@ public class DragImageIntoJavaFX {
     public ImageView imageView;
     @FXML
     public ComboBox<DistanceMethod> distanceMethod;
-    public int k = 3;
+    @FXML
+    public ComboBox<Integer> comboboxK;
+    @FXML
+    public ComboBox<Algorithm> comboboxAlgorithm;
 
     //TODO Faire choisir k, la méthode de calcul de distance et kmeans ou dbscan
     @FXML
     private void changeImage(ActionEvent event){
         event.consume();
+
         DistanceMethod distanceMethod = this.distanceMethod.valueProperty().getValue();
+        int k = this.comboboxK.valueProperty().getValue();
+        Algorithm algorithm = this.comboboxAlgorithm.valueProperty().getValue();
+
         BufferedImage bufferedImage = Utils.transformImageToBufferedImage(imageView.getImage());
 
         List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
         List<Cluster> clusterList = Utils.createClusters(k);
 
-        Kmeans kmeans = new Kmeans(listPixel,clusterList);
+        ExecutableAlgorithm executableAlgorithm;
+        if (algorithm == Algorithm.DBSCAN) {
+            executableAlgorithm = new DbScan();
+        } else {
+            executableAlgorithm = new Kmeans(listPixel, clusterList);
+        }
 
-        BufferedImage newImage = kmeans.doKmeans(bufferedImage,distanceMethod);
-        Utils.createImage("",newImage,Algorithm.KMEANS,distanceMethod,k);
-        System.out.println(newImage);
+        BufferedImage newImage = executableAlgorithm.executeAlgorithm(bufferedImage,distanceMethod);
+        Utils.createImage("",newImage,algorithm,distanceMethod,k);
 
+        Image image = SwingFXUtils.toFXImage(newImage, null);
+        this.imageView.setImage(image);
     }
 
     public void initialize() {
@@ -57,7 +71,7 @@ public class DragImageIntoJavaFX {
     public void makeTextAreaDragTarget(Node node) {
         node.setOnDragOver(event -> event.acceptTransferModes(TransferMode.ANY));
 
-        this.distanceMethod.getItems().setAll(DistanceMethod.values());
+        populateCombobox();
 
         node.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
@@ -87,6 +101,19 @@ public class DragImageIntoJavaFX {
         });
     }
 
+    private void populateCombobox() {
+        this.distanceMethod.getItems().setAll(DistanceMethod.values());
+        this.distanceMethod.getSelectionModel().selectFirst();
+
+        this.comboboxAlgorithm.getItems().setAll(Algorithm.values());
+        this.comboboxAlgorithm.getSelectionModel().selectFirst();
+
+        this.comboboxK.getItems().add(3);
+        this.comboboxK.getItems().add(16);
+        this.comboboxK.getItems().add(32);
+        this.comboboxK.getItems().add(64);
+        this.comboboxK.getSelectionModel().selectFirst();
+    }
 
 
 }

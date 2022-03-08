@@ -31,7 +31,11 @@
     </StackPane>
    <Pane prefHeight="200.0" prefWidth="1000.0">
       <children>
-          <ComboBox fx:id="distanceMethod"  prefWidth="90.0" promptText="choose">
+          <ComboBox fx:id="distanceMethod"  layoutX="500.0" layoutY="50.0" prefWidth="110.0" promptText="choose">
+          </ComboBox>
+          <ComboBox fx:id="comboboxK"  layoutX="400.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
+          </ComboBox>
+          <ComboBox fx:id="comboboxAlgorithm"  layoutX="620.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
           </ComboBox>
          <Button onAction="#changeImage" layoutX="474.0" layoutY="79.0" mnemonicParsing="false" text="Transform" />
       </children>

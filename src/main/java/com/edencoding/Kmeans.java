@@ -11,7 +11,7 @@ import java.util.List;
  * Project: drag-and-drop
  * Package: com.edencoding
  */
-public class Kmeans {
+public class Kmeans implements ExecutableAlgorithm {
     private List<RGBRepresentation> listPixels;
     private  List<Cluster> listClusters;
 
@@ -42,7 +42,7 @@ public class Kmeans {
      * @param method Method to calculate distance
      * @return new bufferedImage according to clustering
      */
-    public BufferedImage doKmeans(BufferedImage image,DistanceMethod method){
+    public BufferedImage executeAlgorithm(BufferedImage image,DistanceMethod method){
 
         int[] idClusterForEachPixel = new int[this.listPixels.size()];
         Arrays.fill(idClusterForEachPixel,-1);

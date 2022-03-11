@@ -36,7 +36,7 @@ public class DragImageIntoJavaFX {
     @FXML
     public ComboBox<Algorithm> comboboxAlgorithm;
 
-    //TODO Faire choisir k, la méthode de calcul de distance et kmeans ou dbscan
+    //TODO Chercher pourquoi appliquer la premiere fois sur l'image c'est si lonng
     @FXML
     private void changeImage(ActionEvent event){
         event.consume();

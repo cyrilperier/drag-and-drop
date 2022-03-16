@@ -52,7 +52,7 @@ public class DragImageIntoJavaFX {
 
         ExecutableAlgorithm executableAlgorithm;
         if (algorithm == Algorithm.DBSCAN) {
-            executableAlgorithm = new DbScan();
+            executableAlgorithm = new DbScan(listPixel,3,100);
         } else {
             executableAlgorithm = new Kmeans(listPixel, clusterList);
         }

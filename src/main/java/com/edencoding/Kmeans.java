@@ -56,34 +56,12 @@ public class Kmeans implements ExecutableAlgorithm {
 
         }while(pixelChangedCluster); //Stop when pixel stop changing of cluster
 
-        return createImageFromCluster(image,idClusterForEachPixel);
+        return Utils.createImageFromCluster(image,idClusterForEachPixel,this.listClusters);
 
 
     }
 
-    /**
-     * Create new image with the color of cluster;
-     * @param bufferedImage Old image, to have width and height
-     * @param idClusterForEachPixel Array with cluster associate for all pixel
-     * @return new Image, after clustering
-     */
-    private BufferedImage createImageFromCluster(BufferedImage bufferedImage, int[] idClusterForEachPixel) {
-        int height = bufferedImage.getHeight();
-        int width = bufferedImage.getWidth();
-        BufferedImage result = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-        for (int h = 0; h < height; h++) {
-            for (int w = 0; w < width; w++) {
-                //Get Cluster associate to the pixel
-                int idCluster = idClusterForEachPixel[width * h + w];
-                //Create color from cluster
-                Color pixel = this.listClusters.get(idCluster).getColorCluster();
-                //Apply color to the new image
-                result.setRGB(w,h,pixel.getRGB());
-            }
-        }
 
-        return result;
-    }
 
 
 

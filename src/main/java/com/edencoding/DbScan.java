@@ -1,7 +1,6 @@
 package com.edencoding;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,15 +11,18 @@ import java.util.Random;
  */
 public class DbScan implements ExecutableAlgorithm{
 //TODO Core point pour améliorer
-    private List<RGBRepresentation> listPixels;
-    private int minCLosePoints;
+    private List<RGBRepresentation> listPixelsUnvisited;
+    /**
+     * Minimum de point requis pour etre un cluster
+     */
+    private int minClosePoints;
     private double distanceInterClasses;
     private List<Cluster> clusterList;
 
 
     public DbScan(List<RGBRepresentation> listPixels, int minCLosePoints, double distanceInterClasses, List<Cluster> clusterList) {
-        this.listPixels = listPixels;
-        this.minCLosePoints = minCLosePoints;
+        this.listPixelsUnvisited = listPixels;
+        this.minClosePoints = minCLosePoints;
         this.distanceInterClasses = distanceInterClasses;
         this.clusterList = clusterList;
     }
@@ -28,20 +30,20 @@ public class DbScan implements ExecutableAlgorithm{
     public DbScan() {
     }
 
-    public List<RGBRepresentation> getListPixels() {
-        return listPixels;
+    public List<RGBRepresentation> getListPixelsUnvisited() {
+        return listPixelsUnvisited;
     }
 
-    public void setListPixels(List<RGBRepresentation> listPixels) {
-        this.listPixels = listPixels;
+    public void setListPixelsUnvisited(List<RGBRepresentation> listPixelsUnvisited) {
+        this.listPixelsUnvisited = listPixelsUnvisited;
     }
 
-    public int getMinCLosePoints() {
-        return minCLosePoints;
+    public int getMinClosePoints() {
+        return minClosePoints;
     }
 
-    public void setMinCLosePoints(int minCLosePoints) {
-        this.minCLosePoints = minCLosePoints;
+    public void setMinClosePoints(int minClosePoints) {
+        this.minClosePoints = minClosePoints;
     }
 
     public double getDistanceInterClasses() {
@@ -64,47 +66,70 @@ public class DbScan implements ExecutableAlgorithm{
     public BufferedImage executeAlgorithm(BufferedImage bufferedImage, DistanceMethod method) {
         int height = bufferedImage.getHeight();
         int width = bufferedImage.getWidth();
-        Random rand = new Random();
-        int randomH = rand.nextInt(height);
-        int randomW = rand.nextInt(width);
 
-        int indicePixel = width * randomH + randomW;
-        Cluster clusterTest = new Cluster(this.listPixels.get(indicePixel));
-        Cluster pixelTested = addPrecedentSuivantCluster(clusterTest,indicePixel,method,new ArrayList<>());
+        while (this.listPixelsUnvisited.size() > 0 ){
+            RGBRepresentation pixel = getAleaPixel();
+            this.listPixelsUnvisited.remove(pixel);
+            Cluster newCluster = new Cluster(pixel);
+            searchAllNeighbours(newCluster, method);
+            if(newCluster.getPixelAssociate().size() > this.minClosePoints){
+                System.out.println(newCluster);
+            }else{
+                //Mettre en noir le pixel qui corresspond pas a un cluster
+                this.listPixelsUnvisited.addAll(newCluster.getPixelAssociate());
+            }
+
+
+
+        }
+
+
+
         return null;
     }
 
-    private Cluster addPrecedentSuivantCluster(Cluster clusterTest, int indice, DistanceMethod method, List<RGBRepresentation> listPixelVisted ) {
 
-        int numberOfClosePoint;
-        int indicePrecedent = indice - 1;
-        int indiceSuivant = indice + 1;
-        int sizeAssociate = clusterTest.getPixelAssociate().size();
-        int  numberPixelSee = listPixelVisted.size();
-        if( numberPixelSee > sizeAssociate && numberPixelSee  >  this.minCLosePoints){
-            return clusterTest;
-        }else{
-            if(indicePrecedent > 0 && this.listPixels.get(indicePrecedent) != null && listPixelVisted.contains(this.listPixels.get(indicePrecedent))){
-                searchPixel(method, listPixelVisted, clusterTest, indicePrecedent);
-            }else if(indiceSuivant < this.listPixels.size() && this.listPixels.get(indiceSuivant) != null && listPixelVisted.contains(this.listPixels.get(indiceSuivant))){
-                searchPixel(method, listPixelVisted, clusterTest, indiceSuivant);
+    public RGBRepresentation getAleaPixel(){
+        Random rand = new Random();
+        int indicePixel = rand.nextInt(listPixelsUnvisited.size());
+        return this.listPixelsUnvisited.get(indicePixel);
 
+    }
+
+    /**
+     * Method which search all neighbours for one pixel, with the distance between him and all other points unvisited
+     * @param CenterPixel
+     * @param method
+     * @return
+     */
+    private List<RGBRepresentation> searchNeighboursOnePixel(RGBRepresentation CenterPixel, DistanceMethod method){
+        Cluster cluster = new Cluster(CenterPixel);
+        for (RGBRepresentation pixel: this.listPixelsUnvisited
+             ) {
+            double distance = method == DistanceMethod.EUCLIDEAN ? Utils.distanceEuclidean(cluster,pixel) : Utils.distanceManhattan(cluster,pixel);
+            if(distance <= this.distanceInterClasses ){
+                cluster.addPixel(pixel);
+                this.listPixelsUnvisited.remove(pixel);
             }
         }
 
-        return clusterTest;
+        return cluster.getPixelAssociate();
     }
 
-    private void searchPixel(DistanceMethod method, List<RGBRepresentation> listPixelVisted, Cluster clusterTest, int indicePrecedent) {
-        RGBRepresentation pixelPrecedent = this.listPixels.get(indicePrecedent);
-        listPixelVisted.add(pixelPrecedent);
-        double distance = method == DistanceMethod.EUCLIDEAN ? Utils.distanceEuclidean(clusterTest,pixelPrecedent) : Utils.distanceManhattan(clusterTest,pixelPrecedent);
-        if(distance < this.distanceInterClasses ){
-            clusterTest.addPixel(pixelPrecedent);
-            addPrecedentSuivantCluster(clusterTest,indicePrecedent,method,listPixelVisted);
-
+    /**
+     * Method which search all neighbours of neighbours
+     * @param cluster
+     * @param method
+     */
+    private void searchAllNeighbours(Cluster cluster, DistanceMethod method){
+        //Ajout de tous les premiers voisins
+        cluster.addAllPixels(searchNeighboursOnePixel(cluster.getRgbRepresentation(),method));
+        //Ajout des voisins pour chaque voisins
+        for (RGBRepresentation pixel : cluster.getPixelAssociate()) {
+            cluster.addAllPixels(searchNeighboursOnePixel(pixel,method));
         }
     }
+
 
 
     /**

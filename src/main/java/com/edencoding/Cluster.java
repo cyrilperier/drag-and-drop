@@ -56,6 +56,9 @@ public class Cluster {
     public void addPixel(RGBRepresentation pixel){
         this.pixelAssociate.add(pixel);
     }
+    public void addAllPixels(List<RGBRepresentation> pixels){
+        this.pixelAssociate.addAll(pixels);
+    }
     public int getRed() {
         return this.rgbRepresentation.getRed();
     }

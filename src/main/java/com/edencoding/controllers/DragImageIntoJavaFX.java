@@ -40,6 +40,8 @@ public class DragImageIntoJavaFX {
     @FXML
     public ComboBox<Integer> comboboxDistance;
 
+    public String name;
+
     //TODO Chercher pourquoi appliquer la premiere fois sur l'image c'est si lonng
     @FXML
     private void changeImage(ActionEvent event){
@@ -67,7 +69,7 @@ public class DragImageIntoJavaFX {
         }
 
         BufferedImage newImage = executableAlgorithm.executeAlgorithm(bufferedImage,distanceMethod);
-        Utils.createImage("",newImage,algorithm,distanceMethod,k);
+        Utils.createImage(name,newImage,algorithm,distanceMethod,k);
 
         Image image = SwingFXUtils.toFXImage(newImage, null);
         this.imageView.setImage(image);
@@ -88,10 +90,13 @@ public class DragImageIntoJavaFX {
             if(event.getDragboard().hasFiles()) {
 
                 Image img = null;
-                System.out.println(db.getFiles().get(0).getAbsolutePath());
+                File file = db.getFiles().get(0);
+                this.name  = file.getName().replaceFirst("[.][^.]+$", "");
+                System.out.println(name);
+                System.out.println(file.getAbsolutePath());
                 java.awt.Image image = null;
                 try {
-                    img = new Image(new FileInputStream(db.getFiles().get(0).getAbsolutePath()), 300, 300, false, true);
+                    img = new Image(new FileInputStream(file.getAbsolutePath()), 300, 300, false, true);
 
 
                 } catch (FileNotFoundException e) {

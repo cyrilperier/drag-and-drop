@@ -91,7 +91,7 @@ public class DragImageIntoJavaFX {
                 System.out.println(db.getFiles().get(0).getAbsolutePath());
                 java.awt.Image image = null;
                 try {
-                    img = new Image(new FileInputStream(db.getFiles().get(0).getAbsolutePath()), 200, 200, false, true);
+                    img = new Image(new FileInputStream(db.getFiles().get(0).getAbsolutePath()), 300, 300, false, true);
 
 
                 } catch (FileNotFoundException e) {

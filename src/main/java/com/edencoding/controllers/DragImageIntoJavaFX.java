@@ -52,7 +52,7 @@ public class DragImageIntoJavaFX {
 
         ExecutableAlgorithm executableAlgorithm;
         if (algorithm == Algorithm.DBSCAN) {
-            executableAlgorithm = new DbScan(listPixel,3,100);
+            executableAlgorithm = new DbScan(listPixel,3,3);
         } else {
             executableAlgorithm = new Kmeans(listPixel, clusterList);
         }
@@ -82,7 +82,7 @@ public class DragImageIntoJavaFX {
                 System.out.println(db.getFiles().get(0).getAbsolutePath());
                 java.awt.Image image = null;
                 try {
-                    img = new Image(new FileInputStream(db.getFiles().get(0).getAbsolutePath()), 300, 300, false, true);
+                    img = new Image(new FileInputStream(db.getFiles().get(0).getAbsolutePath()), 200, 200, false, true);
 
 
                 } catch (FileNotFoundException e) {

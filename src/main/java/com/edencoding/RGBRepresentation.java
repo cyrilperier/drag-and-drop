@@ -12,13 +12,27 @@ public class RGBRepresentation {
     private int red;
     private int blue;
     private int green;
+    private int id;
 
-    public RGBRepresentation(int red, int green,int blue) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public RGBRepresentation(int red, int green, int blue) {
         this.red = red;
         this.green = green;
         this.blue = blue;
     }
-
+    public RGBRepresentation(int red, int green,int blue,int id) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.id = id;
+    }
     public RGBRepresentation() {
         this.generateRGB();
     }

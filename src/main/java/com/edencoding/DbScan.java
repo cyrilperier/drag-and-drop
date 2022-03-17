@@ -1,10 +1,9 @@
 package com.edencoding;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author Launois Remy
@@ -43,88 +42,36 @@ public class DbScan implements ExecutableAlgorithm{
     public DbScan() {
     }
 
-    public List<RGBRepresentation> getListPixelsUnvisited() {
-        return listPixelsUnvisited;
-    }
-
-    public void setListPixelsUnvisited(List<RGBRepresentation> listPixelsUnvisited) {
-        this.listPixelsUnvisited = listPixelsUnvisited;
-    }
-
-    public int getMinClosePoints() {
-        return minClosePoints;
-    }
-
-    public void setMinClosePoints(int minClosePoints) {
-        this.minClosePoints = minClosePoints;
-    }
-
-    public double getDistanceInterClasses() {
-        return distanceInterClasses;
-    }
-
-    public void setDistanceInterClasses(double distanceInterClasses) {
-        this.distanceInterClasses = distanceInterClasses;
-    }
-
-    public List<Cluster> getClusterList() {
-        return clusterList;
-    }
-
-    public void setClusterList(List<Cluster> clusterList) {
-        this.clusterList = clusterList;
-    }
-
     @Override
     public BufferedImage executeAlgorithm(BufferedImage bufferedImage, DistanceMethod method) {
-        int height = bufferedImage.getHeight();
-        int width = bufferedImage.getWidth();
-
         Arrays.fill(idClusterForEachPixel,-1);
 
         int idCLuster = 0;
         while (this.listPixelsUnvisited.size() > 0 ){
             RGBRepresentation pixel = getAleaPixel();
             this.listPixelsUnvisited.remove(pixel);
-            Cluster cluster = searchAllNeighbours(pixel, method);
-            if(cluster.getPixelAssociate().size() > this.minClosePoints){
-                cluster.setIdCluster(idCLuster);
-                idCLuster++;
-                this.clusterList.add(cluster);
-            }else{
-                //Mettre en noir le pixel qui corresspond pas a un cluster
-                this.listPixelsUnvisited.addAll(cluster.getPixelAssociate());
+            Cluster cluster =new Cluster(pixel);
+            cluster.setIdCluster(idCLuster);
+            idCLuster++;
+            searchAllNeighbours(cluster, method);
+            if(cluster.getPixelAssociate().size() < this.minClosePoints){
+                cluster.setBlack();
             }
-
-
-            //Il faut garder la lsite de tous les pixels
-            /*
-            Pou chaque pixel cherchais quel est son cluster, et mettre le couleur de son cluster a la palce
-             */
+            this.clusterList.add(cluster);
 
         }
 
-        getIdClusterForEachPixel();
+
+        for (Cluster cluster:
+                this.clusterList) {
+            for (RGBRepresentation pixel :
+                    cluster.getPixelAssociate()) {
+                this.idClusterForEachPixel[pixel.getId()] = cluster.getIdCluster();
+            }
+        }
+
         return Utils.createImageFromCluster(bufferedImage,idClusterForEachPixel,this.clusterList);
     }
-
-    private void getIdClusterForEachPixel() {
-        int i = 0;
-        for (RGBRepresentation pixel:
-             this.listPixelInitial) {
-
-            int indiceCluster = 0;
-            boolean goodCLuster = false;
-            while (!goodCLuster && indiceCluster < this.clusterList.size()){
-                goodCLuster = this.clusterList.get(indiceCluster).containsPixel(pixel);
-                indiceCluster++;
-            }
-
-            this.idClusterForEachPixel[i] = --indiceCluster;
-            i++;
-        }
-    }
-
 
     public RGBRepresentation getAleaPixel(){
         Random rand = new Random();
@@ -135,13 +82,14 @@ public class DbScan implements ExecutableAlgorithm{
 
     /**
      * Method which search all neighbours for one pixel, with the distance between him and all other points unvisited
-     * @param CenterPixel
+     * @param centerPixel
      * @param method
      * @return
      */
-    private List<RGBRepresentation> searchNeighboursOnePixel(RGBRepresentation CenterPixel, DistanceMethod method){
-        Cluster cluster = new Cluster(CenterPixel);
+    private List<RGBRepresentation> searchNeighboursOnePixel(RGBRepresentation centerPixel, DistanceMethod method){
+        Cluster cluster = new Cluster(centerPixel);
         List<RGBRepresentation> pixelVisited = new ArrayList<>();
+
         for (RGBRepresentation pixel: this.listPixelsUnvisited
              ) {
             double distance = method == DistanceMethod.EUCLIDEAN ? Utils.distanceEuclidean(cluster,pixel) : Utils.distanceManhattan(cluster,pixel);
@@ -157,34 +105,33 @@ public class DbScan implements ExecutableAlgorithm{
 
     /**
      * Method which search all neighbours of neighbours
-     * @param pixel
+     * @param cluster
      * @param method
      */
-    private Cluster searchAllNeighbours(RGBRepresentation pixel, DistanceMethod method){
-        //Ajout de tous les premiers voisins
-        Cluster cluster = new Cluster(pixel);
+    private void searchAllNeighbours(Cluster cluster, DistanceMethod method){
+        cluster.addPixel(cluster.getRgbRepresentation());
+        List<RGBRepresentation> listNeighbours =  searchNeighboursOnePixel(cluster.getRgbRepresentation(),method);
+        //List a ajouter dans le cluster a la fin
+        List<RGBRepresentation> listAssociatePixel =  new ArrayList<>(listNeighbours);
 
-        //TODO je ne parcours pas les voisins des voisins des voisins
-        //Ajout des voisins pour chaque voisins
-        List<RGBRepresentation> listNeighbours =  searchNeighboursOnePixel(pixel,method);;
-        for (RGBRepresentation pixelAssociate : listNeighbours) {
-            cluster.addPixel(pixelAssociate);
-            List<RGBRepresentation> newNeighbours = searchNeighboursOnePixel(pixel,method);
-            cluster.addAllPixels(newNeighbours);
+        //Tant qu'on trouve de voisins
+        while(!listNeighbours.isEmpty()){
+            RGBRepresentation pixelToSearchNeighbour = listNeighbours.get(0);
+            listNeighbours.remove(pixelToSearchNeighbour);
+
+            //Search tous les voisins
+            List<RGBRepresentation> newNeighbours = searchNeighboursOnePixel(pixelToSearchNeighbour,method);
+            //Ajout les nouveaux voisins aux voisins actuels
+            listNeighbours.addAll(newNeighbours);
+            //Ajout les nouveaux voisisn au total des voisins
+            listAssociatePixel.addAll(newNeighbours);
+            //Supprime le voisin qu'on vient de visiter
+            if(!listAssociatePixel.contains(pixelToSearchNeighbour)){
+                listAssociatePixel.add(pixelToSearchNeighbour);
+            }
         }
-        return cluster;
+        //Ajout de tous les voisins
+        cluster.addAllPixels(listAssociatePixel);
     }
 
-
-
-    /**
-     * Que
-     */
-
-    /**
-     * Prendre un point alea
-     * Si il a au moins minClosePoints pixel proche peut devenir un cluster ils deviennt tous dans le cluster
-     * Pour chaque pixel dedans regardant les pixels proches et les rajouter au cluster courant
-     * Si il n'y en a plus proche nouveau cluster, avec point aléatoire
-     */
 }

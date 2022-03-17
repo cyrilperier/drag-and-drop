@@ -39,7 +39,7 @@ public class Utils {
                 int green = color.getGreen();
                 int blue = color.getBlue();
 
-                rgbRepresentationList.add(new RGBRepresentation(red,green,blue));
+                rgbRepresentationList.add(new RGBRepresentation(red,green,blue,width * h + w));
             }
         }
         return rgbRepresentationList;
@@ -69,7 +69,10 @@ public class Utils {
                 //Get Cluster associate to the pixel
                 int idCluster = idClusterForEachPixel[width * h + w];
                 //Create color from cluster
-                Color pixel = listClusters.get(idCluster).getColorCluster();
+                Color pixel = new Color(0,0,0);
+                if(idCluster != -1){
+                    pixel = listClusters.get(idCluster).getColorCluster();
+                }
                 //Apply color to the new image
                 result.setRGB(w,h,pixel.getRGB());
             }

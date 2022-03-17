@@ -127,6 +127,12 @@ public class Cluster {
                 ", rgbRepresentation = " + rgbRepresentation +
                 ", pixelAssociate=" + pixelAssociate ;
     }
+
+    public void setBlack() {
+        this.setRed(0);
+        this.setGreen(0);
+        this.setBlue(0);
+    }
 }
 
 

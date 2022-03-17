@@ -92,8 +92,6 @@ public class DragImageIntoJavaFX {
                 Image img = null;
                 File file = db.getFiles().get(0);
                 this.name  = file.getName().replaceFirst("[.][^.]+$", "");
-                System.out.println(name);
-                System.out.println(file.getAbsolutePath());
                 java.awt.Image image = null;
                 try {
                     img = new Image(new FileInputStream(file.getAbsolutePath()), 300, 300, false, true);

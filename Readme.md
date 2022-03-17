@@ -7,6 +7,8 @@ Il y a deux solution pour lancer l'application :
 Lancer la classe App, qui se trouve dans src/main/java/com/encoding/App
 - Lancer le .jar qui se trouve  a la racine nommé : TP2_forage
 
+Pour re générer le jar s'il un probleme survient, utiliser la task package de maven
+
 Ensuite il faut déposer une image au centre de l'applciation : Drop image
 Choisir les paramètres : 
 - gauche k, pou kmeans / Distance minimale et voisins pour DBSCAN

@@ -31,13 +31,23 @@
     </StackPane>
    <Pane prefHeight="200.0" prefWidth="1000.0">
       <children>
-          <ComboBox fx:id="distanceMethod"  layoutX="500.0" layoutY="50.0" prefWidth="110.0" promptText="choose">
+          <Label text="k pour Kmeans:" layoutX="250.0" layoutY="20.0"/>
+          <ComboBox fx:id="comboboxK"  layoutX="250.0" layoutY="35.0" prefWidth="90.0" promptText="choose">
           </ComboBox>
-          <ComboBox fx:id="comboboxK"  layoutX="400.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
+          <Label text="Methode de distance" layoutX="400.0" layoutY="50.0"/>
+          <ComboBox fx:id="distanceMethod"  layoutX="400.0" layoutY="75.0" prefWidth="110.0" promptText="choose">
           </ComboBox>
-          <ComboBox fx:id="comboboxAlgorithm"  layoutX="620.0" layoutY="50.0" prefWidth="90.0" promptText="choose">
+          <Label text="Algorithme" layoutX="520.0" layoutY="50.0"/>
+          <ComboBox fx:id="comboboxAlgorithm"  layoutX="520.0" layoutY="75.0" prefWidth="90.0" promptText="choose">
           </ComboBox>
-         <Button onAction="#changeImage" layoutX="474.0" layoutY="79.0" mnemonicParsing="false" text="Transform" />
+          <Label text="Distance inter classe:" layoutX="650.0" layoutY="20.0"/>
+          <ComboBox fx:id="comboboxDistance"  layoutX="650.0" layoutY="35.0" prefWidth="90.0" promptText="choose">
+          </ComboBox>
+          <Label text="Nombre de voisins requis:" layoutX="770.0" layoutY="20.0"/>
+          <ComboBox fx:id="comboboxVoisins"  layoutX="770.0" layoutY="35.0" prefWidth="90.0" promptText="choose">
+          </ComboBox>
+
+         <Button onAction="#changeImage" layoutX="474.0" layoutY="110.0" mnemonicParsing="false" text="Transform" />
       </children>
    </Pane>
 </VBox>

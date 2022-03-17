@@ -35,6 +35,10 @@ public class DragImageIntoJavaFX {
     public ComboBox<Integer> comboboxK;
     @FXML
     public ComboBox<Algorithm> comboboxAlgorithm;
+    @FXML
+    public ComboBox<Integer> comboboxVoisins;
+    @FXML
+    public ComboBox<Integer> comboboxDistance;
 
     //TODO Chercher pourquoi appliquer la premiere fois sur l'image c'est si lonng
     @FXML
@@ -45,6 +49,11 @@ public class DragImageIntoJavaFX {
         int k = this.comboboxK.valueProperty().getValue();
         Algorithm algorithm = this.comboboxAlgorithm.valueProperty().getValue();
 
+        int minClosePoint = this.comboboxVoisins.valueProperty().getValue();
+        int distanceInterClasses = this.comboboxDistance.valueProperty().getValue();
+
+
+
         BufferedImage bufferedImage = Utils.transformImageToBufferedImage(imageView.getImage());
 
         List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
@@ -52,7 +61,7 @@ public class DragImageIntoJavaFX {
 
         ExecutableAlgorithm executableAlgorithm;
         if (algorithm == Algorithm.DBSCAN) {
-            executableAlgorithm = new DbScan(listPixel,3,3);
+            executableAlgorithm = new DbScan(listPixel,minClosePoint,distanceInterClasses);
         } else {
             executableAlgorithm = new Kmeans(listPixel, clusterList);
         }
@@ -113,6 +122,23 @@ public class DragImageIntoJavaFX {
         this.comboboxK.getItems().add(32);
         this.comboboxK.getItems().add(64);
         this.comboboxK.getSelectionModel().selectFirst();
+
+        this.comboboxDistance.getItems().add(2);
+        this.comboboxDistance.getItems().add(3);
+        this.comboboxDistance.getItems().add(5);
+        this.comboboxDistance.getItems().add(10);
+        this.comboboxDistance.getItems().add(20);
+        this.comboboxDistance.getSelectionModel().selectFirst();
+
+        this.comboboxVoisins.getItems().add(2);
+        this.comboboxVoisins.getItems().add(3);
+        this.comboboxVoisins.getItems().add(5);
+        this.comboboxVoisins.getItems().add(7);
+        this.comboboxVoisins.getItems().add(10);
+        this.comboboxVoisins.getSelectionModel().selectFirst();
+
+
+
     }
 
 

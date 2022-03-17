@@ -26,7 +26,7 @@
             <ImageView layoutX="484.0" layoutY="184.0" pickOnBounds="true" preserveRatio="true">
                 <Image url="@../images/download.png" />
             </ImageView>
-            <Label layoutX="457.0" layoutY="227.0" prefHeight="65.0" prefWidth="87.0" text="Drop text file here to view content" textAlignment="CENTER" wrapText="true" />
+            <Label layoutX="457.0" layoutY="227.0" prefHeight="65.0" prefWidth="87.0" text="Drop image" textAlignment="CENTER" wrapText="true" />
         </Pane>
     </StackPane>
    <Pane prefHeight="200.0" prefWidth="1000.0">

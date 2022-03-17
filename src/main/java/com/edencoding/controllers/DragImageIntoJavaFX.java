@@ -61,15 +61,18 @@ public class DragImageIntoJavaFX {
         List<RGBRepresentation> listPixel = Utils.getRGBFromImg(bufferedImage);
         List<Cluster> clusterList = Utils.createClusters(k);
 
+        String suffixe;
         ExecutableAlgorithm executableAlgorithm;
         if (algorithm == Algorithm.DBSCAN) {
             executableAlgorithm = new DbScan(listPixel,minClosePoint,distanceInterClasses);
+            suffixe = minClosePoint +"_"+distanceInterClasses;
         } else {
             executableAlgorithm = new Kmeans(listPixel, clusterList);
+            suffixe =String.valueOf(k);
         }
 
         BufferedImage newImage = executableAlgorithm.executeAlgorithm(bufferedImage,distanceMethod);
-        Utils.createImage(name,newImage,algorithm,distanceMethod,k);
+        Utils.createImage(name,newImage,algorithm,distanceMethod,suffixe);
 
         Image image = SwingFXUtils.toFXImage(newImage, null);
         this.imageView.setImage(image);

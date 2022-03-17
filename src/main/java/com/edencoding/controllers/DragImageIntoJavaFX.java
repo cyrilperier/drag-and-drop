@@ -41,6 +41,10 @@ public class DragImageIntoJavaFX {
     public ComboBox<Integer> comboboxDistance;
 
     public String name;
+    @FXML
+    public ComboBox<Integer> sizeImageH;
+    @FXML
+    public ComboBox<Integer> sizeImageW;
 
     //TODO Chercher pourquoi appliquer la premiere fois sur l'image c'est si lonng
     @FXML
@@ -68,7 +72,7 @@ public class DragImageIntoJavaFX {
             suffixe = minClosePoint +"_"+distanceInterClasses;
         } else {
             executableAlgorithm = new Kmeans(listPixel, clusterList);
-            suffixe =String.valueOf(k);
+            suffixe = String.valueOf(k);
         }
 
         BufferedImage newImage = executableAlgorithm.executeAlgorithm(bufferedImage,distanceMethod);
@@ -91,19 +95,21 @@ public class DragImageIntoJavaFX {
             Dragboard db = event.getDragboard();
 
             if(event.getDragboard().hasFiles()) {
-
+                dropInstructions.getChildren().remove(this.imageView);
                 Image img = null;
                 File file = db.getFiles().get(0);
                 this.name  = file.getName().replaceFirst("[.][^.]+$", "");
                 java.awt.Image image = null;
                 try {
-                    img = new Image(new FileInputStream(file.getAbsolutePath()), 300, 300, false, true);
+
+                    img = new Image(new FileInputStream(file.getAbsolutePath()), this.sizeImageH.getValue(), this.sizeImageW.getValue(), false, true);
 
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
                 imageView = new ImageView();
+
                 imageView.setImage(img);
                 imageView.setX(350);
                 imageView.setY(40);
@@ -142,6 +148,18 @@ public class DragImageIntoJavaFX {
         this.comboboxVoisins.getItems().add(7);
         this.comboboxVoisins.getItems().add(10);
         this.comboboxVoisins.getSelectionModel().selectFirst();
+
+        this.sizeImageH.getItems().add(100);
+        this.sizeImageH.getItems().add(200);
+        this.sizeImageH.getItems().add(300);
+        this.sizeImageH.getItems().add(400);
+        this.sizeImageH.getSelectionModel().select(2);
+
+        this.sizeImageW.getItems().add(100);
+        this.sizeImageW.getItems().add(200);
+        this.sizeImageW.getItems().add(300);
+        this.sizeImageW.getItems().add(400);
+        this.sizeImageW.getSelectionModel().select(2);
 
 
 

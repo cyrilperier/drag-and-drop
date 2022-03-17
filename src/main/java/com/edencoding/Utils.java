@@ -150,7 +150,7 @@ public class Utils {
      * @param bufferedImage Image we want to save
      */
     public static void createImage(String filename, BufferedImage bufferedImage, Algorithm algorithm, DistanceMethod distanceMethod,String k) {
-        File file = new File("src/output/"+filename+"_"+algorithm+"_"+k+"_"+distanceMethod+".png");
+        File file = new File("output/"+filename+"_"+algorithm+"_"+k+"_"+distanceMethod+".png");
         try {
             ImageIO.write(bufferedImage, "png", file);
         } catch (Exception e) {

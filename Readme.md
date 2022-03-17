@@ -9,11 +9,12 @@ Lancer la classe App, qui se trouve dans src/main/java/com/encoding/App
 
 Pour re générer le jar s'il un probleme survient, utiliser la task package de maven
 
-Ensuite il faut déposer une image au centre de l'applciation : Drop image
+Ensuite il faut déposer une image au centre de l'applciation : Drop image. L'image est redimmenssioner en 300 * 300 dans tous les cas
 Choisir les paramètres : 
 - gauche k, pou kmeans / Distance minimale et voisins pour DBSCAN
 - La méthode de calcul de distance
 - L'algorithme voulu
 
 Cliquer sur le bouton Transform, après un peu de temps l'image va etre remplacer au centre
+
 
